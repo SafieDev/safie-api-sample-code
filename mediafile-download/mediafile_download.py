@@ -26,6 +26,14 @@ SAFIE_API_BASE_URL = "https://openapi.safie.link"
     help="作成するメディアの終了日時(ex. 2022-11-12T16:42:00) JSTの日時を指定してください 作成可能なファイルの録画時間は1分から10分です",
 )
 def download_media_file(apikey: str, device_id: str, start: datetime, end: datetime):
+    """
+    APIキー認証を利用してメディアファイルのダウンロードを行います
+
+    \b
+    - メディアファイル作成要求
+    - メディアファイル作成状況の確認(30秒間隔で最大10回)
+    - メディアファイルダウンロード
+    """
     JST = timezone(timedelta(hours=9), "JST")
     start = start.replace(tzinfo=JST)
     end = end.replace(tzinfo=JST)

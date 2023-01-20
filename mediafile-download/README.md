@@ -49,6 +49,12 @@ $ poetry run python mediafile_download.py \
 $ poetry run python mediafile_download.py --help
 Usage: mediafile_download.py [OPTIONS]
 
+  APIキー認証を利用してメディアファイルのダウンロードを行います
+
+  - メディアファイル作成要求
+  - メディアファイル作成状況の確認(30秒間隔で最大10回)
+  - メディアファイルダウンロード
+
 Options:
   --apikey TEXT                APIキー  [required]
   --device-id TEXT             デバイスID  [required]

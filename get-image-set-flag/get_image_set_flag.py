@@ -20,15 +20,25 @@ def get_device_image(apikey: str, device_id: str) -> bytes:
     return res.content
 
 
-def analyze(image: bytes) -> bool:
+def analyze(image: bytes, dead_time: int) -> (bool, int):
     """
     画像解析を行いイベントが発生したかどうかを判定します
     サンプルでは実際の解析は行わず、60秒周期のsinの値から判定結果を返します
     """
     score = math.sin(datetime.now().timestamp() / 60 * math.pi * 2)
-    is_event_detected = score > 0.95
-    print(f"analyze result: score={score}, is_event_detected={is_event_detected}")
-    return is_event_detected
+    is_found = score > 0.95
+    print(f"analyze result: score={score}, is_found={is_found}, dead_time={dead_time}")
+    if is_found and dead_time <= 0:  # スコアがしきい値を超えかつ過去15秒間で検出がないときイベント登録
+        dead_time = 3
+        return True, dead_time
+    elif is_found:  # スコアがしきい値を超え過去15秒で検出があるとき検出を無視する
+        print("event found but ignored")
+        dead_time -= 1
+        return False, dead_time
+    else:
+        print("event not found")
+        dead_time -= 1
+        return False, dead_time
 
 
 def post_event(apikey: str, device_id: str, definition_id: str):
@@ -56,13 +66,14 @@ def main(apikey: str, device_id: str, definition_id: str):
     - 取得した画像からイベントが発生したかを判定
     - イベント発生を検知した場合、デバイスに対してイベントを登録
     """
+    dead_time = 0
     while True:
         image = get_device_image(apikey=apikey, device_id=device_id)
         print(f"downloaded latest device image ({len(image)} bytes)")
-        is_event_detected = analyze(image)
+        is_event_detected, dead_time = analyze(image, dead_time)
         if is_event_detected:
             post_event(apikey=apikey, device_id=device_id, definition_id=definition_id)
-            print("event is detected! so posted event")
+            print("event found! so posted event")
         time.sleep(5)
 
 
