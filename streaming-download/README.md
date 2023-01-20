@@ -1,5 +1,7 @@
 ここではAPIキーによる認証を利用してライブストリーミング映像をダウンロードするサンプルコードを掲載しています。
 
+FFmpeg (https://ffmpeg.org/) またはPyAV (https://pyav.org/docs/develop/) によりSafie Streaming API (https://openapi.safie.link/redoc#tag/Live-v2/operation/get-v2-live-playlist) から動画をHLSストリームとして受信し、内容を1分程度ごとのmp4ファイルとして出力します。
+
 # Python 実装
 
 ## 必須要件
@@ -31,6 +33,11 @@ $ poetry run python streaming-download.py \
 ```shell
 $ poetry run python streaming-download.py --help
 Usage: streaming-download.py [OPTIONS]
+
+  APIキー認証を利用してストリーミング映像のダウンロードを行います
+
+  - HTTP Live Streamingプレイリスト取得
+  - ストリーミング映像を1分ごとにファイル保存
 
 Options:
   --apikey TEXT     APIキー  [required]
